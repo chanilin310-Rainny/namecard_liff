@@ -23,8 +23,8 @@ import time
 app = Flask(__name__,template_folder='templates')
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
-line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
-handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
+line_bot_api = LineBotApi(os.getenv(CHANNEL_ACCESS_TOKEN))
+handler = WebhookHandler(os.getenv(CHANNEL_SECRET))
 
 @app.route("/")
 def index():
