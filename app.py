@@ -30,7 +30,7 @@ def wake_up_heroku():
             print('喚醒heroku成功')
         else:
             print('喚醒失敗')
-        time.sleep(14*60)
+        time.sleep(13*60)
 
 threading.Thread(target=wake_up_heroku).start()
 #======讓heroku不會睡著======
