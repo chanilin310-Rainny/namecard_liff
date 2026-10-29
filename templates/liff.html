@@ -10,247 +10,138 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
     <script>
         //==========================LIFF API初始化================================
-        $(document).ready(function() {
+       $(document).ready(function () {
+            // 1. 初始化 LIFF
             liff.init({
-                liffId:"2012022010-mk7EpNEw"
+                liffId: "2012022010-mk7EpNEw"
+            }).then(() => {
+                // 如果是在外部瀏覽器打開且未登入，引導登入
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
+
+                // 2. 檢查 API 是否可用並自動觸發分享
+                if (liff.isApiAvailable('shareTargetPicker')) {
+                    autoShareAndClose();
+                } else {
+                    alert("目前環境無法使用 shareTargetPicker API，請確認後台設定或使用 LINE 打開！");
+                }
+            }).catch((err) => {
+                console.error("LIFF 初始化失敗", err);
+                alert("初始化失敗：" + err.message);
             });
         });
-        //==========================LIFF API初始化================================
 
-        function liff_getOS() {
-            var OS = liff.getOS();
-            alert(OS);
-        }
-
-        function liff_getLanguage() {
-            var Language = liff.getLanguage();
-            alert(Language);
-        }
-
-        function liff_getVersion() {
-            var Version = liff.getVersion();
-            alert(Version);
-        }
-
-        function liff_getLineVersion() {
-            var LineVersion = liff.getLineVersion();
-            alert(LineVersion);
-        }
-
-        function liff_isInClient() {
-            var InClient = liff.isInClient();
-            if (InClient != true) {
-                alert("未使用LIFF瀏覽器");
-            } else {
-                alert("已使用LIFF瀏覽器");
-            }
-        }
-
-        function liff_isLoggedIn() {
-            var isLoggedIn = liff.isLoggedIn();
-            if (isLoggedIn != true) {
-                alert("未登入LINE");
-            } else {
-                alert("已登入LINE");
-            }
-        }
-
-        function liff_login() {
-            liff.login({
-                redirectUri: "https://maso-personal.herokuapp.com/",
-            });
-        }
-
-        function liff_logout() {
-            liff.logout();
-        }
-
-        function liff_getAccessToken() {
-            var accessToken = liff.getAccessToken();
-            alert(accessToken);
-        }
-
-        function liff_getIDToken() {
-            var IDToken = liff.getIDToken();
-            alert(IDToken);
-        }
-
-        function liff_getDecodedIDToken() {
-            var DecodedIDToken = JSON.stringify(liff.getDecodedIDToken());
-            alert(DecodedIDToken);
-        }
-
-        function liff_getContext() {
-            var Context = JSON.stringify(liff.getContext());
-            alert(Context);
-        }
-
-        function liff_getProfile() {
-            liff
-                .getProfile()
-                .then((profile) => {
-                    alert(JSON.stringify(profile));
-                })
-                .catch((err) => {
-                    console.log("error", err);
-                });
-        }
-
-        function liff_getFriendship() {
-            var Friendship = liff.getFriendship();
-            alert(Friendship);
-        }
-
-        function liff_sendMessages() {
-            liff.sendMessages([{
-                type: "text",
-                text: "這一則訊息是來自LIFF網頁",
-            }, ]);
-            alert("LIFF傳送訊息");
-        }
-
-        function liff_openWindow() {
-            // window.location.replace("https://developers.line.biz/en/reference/liff/")
-            liff.openWindow({
-                url: "https://developers.line.biz/en/reference/liff/",
-                external: true,
-            });
-        }
-
-        function liff_closeWindow() {
-            liff.closeWindow();
-        }
-
-        function liff_shareTargetPicker() {
-            liff.shareTargetPicker(
-                [{
-                    type: "image",
-                    originalContentUrl: "https://pic.pimg.tw/saryh777/1641637885-2419307650-g_n.png",
-                    previewImageUrl: "https://pic.pimg.tw/saryh777/1641637885-2419307650-g_n.png",
-                }, ], {
-                    isMultiple: true,
-                }
-            );
-        }
-
-        function liff_LINE_Card() {
-            liff.shareTargetPicker(
-                [{
+        // 自動分享並關閉視窗
+        function autoShareAndClose() {
+            // 這裡發送的是你的黃色小鴨名片卡片
+            liff.shareTargetPicker([
+                {
                     type: "flex",
                     altText: "靖雅的LINE名片",
                     contents: {
-  "type": "carousel",
-  "contents": [
-    {
-      "type": "bubble",
-      "size": "giga",
-      "hero": {
-        "type": "image",
-        "size": "full",
-        "aspectMode": "fit",
-        "aspectRatio": "600:840",
-        "margin": "none",
-        "position": "relative",
-        "url": "https://r2.uploads.tw/2026/10/qctSwBvTB8.webp",
-        "animated": false
-      },
-      "body": {
-        "type": "box",
-        "layout": "horizontal",
-        "contents": [
-          {
-            "type": "button",
-            "action": {
-              "type": "uri",
-              "label": "靖雅官網",
-              "uri": "https://joinus-tw.my.canva.site/?openExternalBrowser=1"
-            },
-            "height": "md",
-            "style": "primary",
-            "color": "#fbc600",
-            "gravity": "center",
-            "margin": "none"
-          },
-          {
-            "type": "button",
-            "action": {
-              "type": "uri",
-              "label": "靖雅粉專",
-              "uri": "https://www.facebook.com/share/1F6Dfkc9X5/"
-            },
-            "height": "md",
-            "style": "primary",
-            "margin": "xs",
-            "color": "#fbc600"
-          },
-          {
-            "type": "button",
-            "action": {
-              "type": "uri",
-              "label": "點我分享",
-              "uri": "https://joinus-tw520.pse.is/9r3jjx"
-            },
-            "height": "md",
-            "style": "primary",
-            "margin": "xs",
-            "color": "#fbc600",
-            "position": "relative",
-            "gravity": "center",
-            "scaling": true,
-            "adjustMode": "shrink-to-fit"
-          }
-        ],
-        "position": "relative"
-      }
-    }
-  ]
-}
-                }], {
-                    isMultiple: true,
+                        type: "carousel",
+                        contents: [
+                            {
+                                type: "bubble",
+                                size: "giga",
+                                hero: {
+                                    type: "image",
+                                    size: "full",
+                                    aspectMode: "fit",
+                                    aspectRatio: "600:840",
+                                    margin: "none",
+                                    position: "relative",
+                                    url: "https://r2.uploads.tw/2026/10/qctSwBvTB8.webp",
+                                    animated: false
+                                },
+                                body: {
+                                    type: "box",
+                                    layout: "horizontal",
+                                    contents: [
+                                        {
+                                            type: "button",
+                                            action: {
+                                                type: "uri",
+                                                label: "靖雅官網",
+                                                uri: "https://joinus-tw.my.canva.site/?openExternalBrowser=1"
+                                            },
+                                            height: "md",
+                                            style: "primary",
+                                            color: "#fbc600",
+                                            gravity: "center",
+                                            margin: "none"
+                                        },
+                                        {
+                                            type: "button",
+                                            action: {
+                                                type: "uri",
+                                                label: "靖雅粉專",
+                                                uri: "https://www.facebook.com/share/1F6Dfkc9X5/"
+                                            },
+                                            height: "md",
+                                            style: "primary",
+                                            margin: "xs",
+                                            color: "#fbc600"
+                                        },
+                                        {
+                                            type: "button",
+                                            action: {
+                                                type: "uri",
+                                                label: "點我分享",
+                                                uri: "https://joinus-tw520.pse.is/9r3jjx"
+                                            },
+                                            height: "md",
+                                            style: "primary",
+                                            margin: "xs",
+                                            color: "#fbc600",
+                                            position: "relative",
+                                            gravity: "center",
+                                            scaling: true,
+                                            adjustMode: "shrink-to-fit"
+                                        }
+                                    ],
+                                    position: "relative"
+                                }
+                            }
+                        ]
+                    }
                 }
-            );
-        }
-
-        function liff_isApiAvailable() {
-            var apiName = "shareTargetPicker";
-            var isApiAvailable = liff.isApiAvailable(apiName);
-            if (isApiAvailable != true) {
-                alert("無法使用" + apiName + " API");
-            } else {
-                alert("可以使用" + apiName + " API");
-            }
+            ], {
+                isMultiple: true,
+            })
+            .then((res) => {
+                // 不論使用者點擊分享或是關閉選擇器，只要流程結束就關閉 LIFF 視窗
+                if (liff.isInClient()) {
+                    liff.closeWindow();
+                }
+            })
+            .catch((err) => {
+                console.error("分享出錯或取消:", err);
+                // 出現異常或取消時也自動關閉
+                if (liff.isInClient()) {
+                    liff.closeWindow();
+                }
+            });
         }
     </script>
     <style>
-        h1 {
-            width: 80%;
-            height: 40px;
-            margin-left: 10%;
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f7f7f7;
+            font-family: sans-serif;
+            color: #666;
         }
-        
-        button {
-            width: 80%;
-            height: 40px;
-            margin-left: 10%;
-            background-color: #c9e8e3;
-            font-weight: 600;
+        .loading-box {
+            text-align: center;
         }
-    </style>
-</head>
+        //==========================LIFF API初始化================================
 
-<body>
-    
-    <h1>LIFF API測試範例：</h1>
-    <h1></h1>
-    <button onclick="liff_isInClient()">顯示是否在LIFF瀏覽器內</button
-    ><br /><br />
-    <button onclick="liff_isApiAvailable()">
-      顯示是否此網頁可用liff.shareTargetPicker() API</button
-    ><br /><br />
-  
-    <button onclick="liff_shareTargetPicker()">分享指定訊息</button><br /><br />
-    <button onclick="liff_LINE_Card()">傳送LINE名片</button><br /><br />
-    <br /><br />
-</body>
+       
 
 </html>
