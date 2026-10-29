@@ -19,6 +19,22 @@ import  os
 import time
 #======python的函數庫==========
 
+#======讓heroku不會睡著======
+import threading 
+import requests
+def wake_up_heroku():
+    while 1==1:
+        url = 'https://namecard-liff.onrender.com' + 'heroku_wake_up'
+        res = requests.get(url)
+        if res.status_code==200:
+            print('喚醒heroku成功')
+        else:
+            print('喚醒失敗')
+        time.sleep(14*60)
+
+threading.Thread(target=wake_up_heroku).start()
+#======讓heroku不會睡著======
+
 
 app = Flask(__name__,template_folder='templates')
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
